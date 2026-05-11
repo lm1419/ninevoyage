@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>无尽之地</title>
+  <link rel="icon" type="image/svg+xml" href="assets/ui/favicon.svg" />
+  <link rel="stylesheet" href="css/style.css?v=home-label-v2" />
+
+</head>
+<body class="home-active">
+  <section class="home-screen active" id="homeScreen" aria-label="无尽之地主菜单">
+    <div class="home-backdrop" aria-hidden="true"></div>
+    <div class="home-shell">
+      <div class="home-copy">
+        <div class="home-kicker">黑暗奇幻 RPG</div>
+        <h1 class="home-title">无尽之地</h1>
+        <p class="home-line">旧王冠下，群星仍在燃烧。</p>
+        <button class="home-version" id="homeVersionBtn" type="button" aria-label="打开版本信息">
+          <span id="homeVersionText">v0.4.0 · 本地构建</span>
+        </button>
+        <button class="home-music" id="homeMusicBtn" type="button" aria-pressed="true" aria-label="关闭主菜单乐曲">
+          <span class="home-music-icon" aria-hidden="true">♪</span>
+          <span id="homeMusicText">主菜单音乐 · 开</span>
+        </button>
+      </div>
+
+      <nav class="home-menu" aria-label="主菜单">
+        <div class="home-menu-head">
+          <span class="home-menu-kicker">灰烬王座</span>
+          <strong>流亡者</strong>
+        </div>
+        <div class="home-actions">
+          <button class="home-action home-action--primary" id="homeNewBtn" type="button">
+            <span class="home-action-mark">I</span>
+            <span class="home-action-text">
+              <strong>踏入黑暗</strong>
+              <small>从无光之门开始新的旅途</small>
+            </span>
+            <span class="home-action-arrow">›</span>
+          </button>
+          <button class="home-action" id="homeContinueBtn" type="button" disabled>
+            <span class="home-action-mark">II</span>
+            <span class="home-action-text">
+              <strong>继续旅途</strong>
+              <small id="homeContinueSummary">暂无营火记录</small>
+            </span>
+            <span class="home-action-arrow">›</span>
+          </button>
+          <button class="home-action" id="homeSettingsBtn" type="button">
+            <span class="home-action-mark">III</span>
+            <span class="home-action-text">
+              <strong>设置</strong>
+              <small>文字与事件</small>
+            </span>
+            <span class="home-action-arrow">›</span>
+          </button>
+        </div>
+        <div class="home-save-preview">
+          <span>最近营火</span>
+          <strong id="homeSaveTime">尚未点燃</strong>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <main class="app">
+    <section class="stage">
+      <header>
+        <div class="banner-main">
+          <div class="seal" aria-hidden="true"></div>
+          <div class="title-block">
+            <div class="banner-kicker">无尽行卷</div>
+            <h1>无尽之地</h1>
+            <div class="dungeon-title" id="dungeonTitle">副本</div>
+          </div>
+        </div>
+        <div class="mode-pill" id="modePill">序章</div>
+      </header>
+
+      <div class="log-wrap">
+        <div class="visual-frame" id="visualFrame"></div>
+        <div class="battle-panel" id="battlePanel"></div>
+        <div class="log" id="log" role="log" aria-live="polite" aria-relevant="additions text" aria-label="冒险日志"></div>
+      </div>
+
+      <div class="battle-hud" id="battleHud"></div>
+      <div class="choices" id="choices"></div>
+      <div class="actions" id="actions"></div>
+    </section>
+
+    <aside class="side">
+      <div class="side-inner">
+      <!-- 流亡者 -->
+      <section class="panel-sec">
+        <div class="char-banner">
+          <div class="char-seal" aria-hidden="true"></div>
+          <div class="char-info">
+            <div class="char-name">流亡者</div>
+            <div class="char-realm" id="uiLevelText">1 · 旅人</div>
+          </div>
+          <div class="char-age" id="uiAge">18岁</div>
+          <button class="mini-btn" id="detailBtn">状态</button>
+        </div>
+
+        <div class="vital-block">
+          <div class="vital-head">
+            <span class="vital-label">生命</span>
+            <span class="vital-num" id="uiHpText">30/30</span>
+          </div>
+          <div class="bar bar--hp"><span id="uiHpBar"></span></div>
+        </div>
+
+        <div class="vital-block">
+          <div class="vital-head">
+            <span class="vital-label">MP</span>
+            <span class="vital-num" id="uiMpText">30/30</span>
+          </div>
+          <div class="bar exp-bar"><span id="uiMpBar"></span></div>
+        </div>
+
+        <div class="vital-block">
+          <div class="vital-head">
+            <span class="vital-label">历练</span>
+            <span class="vital-num vital-num--sm" id="uiExpText">经验 0/0</span>
+          </div>
+          <div class="bar exp-bar"><span id="uiExpBar"></span></div>
+        </div>
+
+        <div class="stat-quad">
+          <div class="stat-cell">
+            <span class="stat-tip" data-tip="影响造成的伤害。公式：基础攻击 + 武器攻击 + 护具攻击 + 临时攻击。">攻击</span>
+            <span class="stat-num" id="uiAtk">5</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-tip" data-tip="按百分比免除最终伤害，默认 0%。">免伤</span>
+            <span class="stat-num" id="uiDef">0%</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-tip" data-tip="影响半即时战斗中行动槽积攒速度。速度越高，行动越快。">速度</span>
+            <span class="stat-num" id="uiSpeed">10</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-tip" data-tip="用于商店和随机事件交易。">金币</span>
+            <span class="stat-num" id="uiGold">0</span>
+          </div>
+          <div class="stat-cell stat-cell--status">
+            <span class="stat-tip" data-tip="显示临时增益或异常状态。战斗临时增益会在战斗结束后清除。">状态</span>
+            <span class="stat-num" id="uiBuff">无</span>
+          </div>
+        </div>
+
+      </section>
+
+      <hr class="sec-divider" />
+
+      <!-- 行程 -->
+      <section class="panel-sec">
+        <h2 class="sec-title"><span class="sec-mark"></span>行程</h2>
+        <div class="grid2">
+          <div>副本</div><div id="uiDungeon">-</div>
+          <div>地域</div><div id="uiRegion">-</div>
+          <div class="journey-expedition-field">日期</div><div class="journey-expedition-field" id="uiCalendar">-</div>
+          <div class="journey-expedition-field">时间</div><div class="journey-expedition-field" id="uiTime">-</div>
+          <div class="journey-expedition-field">干粮</div><div class="journey-expedition-field" id="uiRations">-</div>
+          <div class="journey-expedition-field">回城卷轴</div><div class="journey-expedition-field" id="uiReturnScroll">-</div>
+        </div>
+        <div class="journey-line" id="journeyLine" aria-label="副本进度预期">
+          <div class="journey-line-head">
+            <span>远征行程</span>
+            <strong id="journeyStepText">0/- 步</strong>
+          </div>
+          <div class="journey-track">
+            <div class="journey-fill" id="journeyFill"></div>
+            <div class="journey-current" id="journeyCurrent"></div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="sec-divider" />
+
+      <!-- 装备 -->
+      <section class="panel-sec">
+        <h2 class="sec-title sec-title--link" id="equipTitle"><span class="sec-mark"></span>装备<span class="sec-arrow">›</span></h2>
+        <div class="grid2">
+          <div>武器</div><div id="uiWeapon">无</div>
+          <div>护具</div><div id="uiArmor">无</div>
+        </div>
+      </section>
+
+      </div>
+    </aside>
+  </main>
+
+  <div class="modal multi-tab-modal" id="menuModal" data-multi-tab-modal aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="event-head-seal"></div>
+        <div class="event-head-main">
+          <div class="event-kicker"><span class="event-kicker-dot"></span><span>状态栏菜单</span></div>
+          <h2 id="menuTitle" data-multi-tab-title>菜单</h2>
+        </div>
+        <button id="closeMenu" data-multi-tab-close>关闭</button>
+      </div>
+      <div class="tabs" id="menuTabs" data-multi-tab-tabs></div>
+      <div id="menuContent" data-multi-tab-content></div>
+    </div>
+  </div>
+
+  <div class="modal" id="eventModal">
+    <div class="modal-card event-card">
+      <div class="event-head">
+        <div class="event-head-seal"></div>
+        <div class="event-head-main">
+          <div class="event-kicker"><span class="event-kicker-dot"></span><span id="eventKickerText">随机事件</span></div>
+          <h2 id="eventTitle">事件</h2>
+        </div>
+      </div>
+      <div class="event-content" id="eventContent">
+        <div class="event-illust-frame">
+          <img class="event-illust" id="eventIllust" src="" alt="事件插画" />
+        </div>
+        <div class="event-body">
+          <p class="event-text" id="eventText"></p>
+          <div class="event-result" id="eventResult"></div>
+          <div class="event-choices" id="eventChoices"></div>
+          <div class="event-actions">
+            <button class="primary" id="eventConfirm">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal character-setup-modal" id="characterSetupModal" aria-hidden="true">
+    <form class="modal-card character-setup-card" id="characterSetupForm">
+      <div class="modal-head">
+        <div>
+          <span class="character-setup-kicker">灰烬王座</span>
+          <h2>设定主角</h2>
+        </div>
+        <button class="plain-btn character-setup-close" id="characterSetupCancel" type="button">取消</button>
+      </div>
+      <div class="character-setup-layout">
+        <section class="character-portrait-panel" aria-label="主角立绘预览">
+          <div class="character-portrait-frame">
+            <img id="characterPortraitPreview" src="assets/char/man1.png" alt="主角立绘预览" />
+          </div>
+          <div class="character-portrait-choices" id="characterPortraitChoices" aria-label="选择主角立绘"></div>
+          <button class="character-portrait-caption" id="characterPortraitPickerToggle" type="button" aria-expanded="false">
+            <span>选择立绘</span>
+            <strong id="characterPreviewName">流亡者</strong>
+          </button>
+        </section>
+        <section class="character-setup-body">
+          <label class="character-field">
+            <span>名字</span>
+            <input id="characterNameInput" type="text" maxlength="12" autocomplete="off" placeholder="流亡者" />
+          </label>
+          <div class="character-field">
+            <span>性别</span>
+            <div class="character-gender-options" role="radiogroup" aria-label="主角性别">
+              <label class="character-gender-option">
+                <input id="characterGenderMale" type="radio" name="characterGender" value="male" checked />
+                <span>
+                  <strong>男</strong>
+                  <small>重甲流亡者</small>
+                </span>
+              </label>
+              <label class="character-gender-option">
+                <input type="radio" name="characterGender" value="female" />
+                <span>
+                  <strong>女</strong>
+                  <small>观火行者</small>
+                </span>
+              </label>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="character-setup-actions">
+        <button type="button" id="characterSetupReset">重置</button>
+        <button class="primary" id="characterSetupSubmit" type="submit">开始旅途</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/data-helpers.js"></script>
+  <script src="js/visual-renderer.js"></script>
+  <script src="data/statuses.js"></script>
+  <script src="data/items.js"></script>
+  <script src="data/equipment/rarities.js"></script>
+  <script src="data/equipment/equipment-affixes.js"></script>
+  <script src="data/equipment/equipment-bases.js"></script>
+  <script src="data/equipment/equipment-rare-names.js"></script>
+  <script src="data/equipment/equipment-legendaries.js"></script>
+  <script src="js/equipment.js"></script>
+  <script src="data/skills.js"></script>
+  <script src="data/enemies.js"></script>
+  <script src="data/shops.js"></script>
+  <script src="data/towns/oak-town.js"></script>
+  <script src="js/town-data.js"></script>
+  <script src="data/dungeons/index.js"></script>
+  <script src="data/dungeons/oak01.js"></script>
+  <script src="data/events.js"></script>
+  <script src="data/visuals.js"></script>
+  <script src="js/visual-image-switch.js"></script>
+  <script src="js/game-state.js?v=portrait-picker-v9"></script>
+  <script src="js/adventure-confirm-control.js"></script>
+  <script src="js/result-event-modal-control.js"></script>
+  <script src="js/multi-tab-modal-control.js"></script>
+  <script src="js/town/work.js"></script>
+  <script src="js/town/training.js"></script>
+  <script src="js/town/repair.js"></script>
+  <script src="js/town/rumors.js"></script>
+  <script src="js/town/actions-visual.js"></script>
+  <script src="js/game-ui.js?v=character-setup-v2"></script>
+  <script src="js/game-events.js?v=character-setup-v2"></script>
+  <script src="js/game-battle.js?v=character-setup-v2"></script>
+  <script src="js/game-progression.js"></script>
+  <script src="js/game-menu-shop.js?v=character-setup-v2"></script>
+  <script src="js/game-utils.js?v=portrait-picker-v8"></script>
+  <script src="js/game.js?v=portrait-picker-v10"></script>
+  <script src="js/game-debug.js?v=debug-items-equipment-v1"></script>
+</body>
+</html>

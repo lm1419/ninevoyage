@@ -1,0 +1,132 @@
+registerDungeon({
+  id: "oak01",
+  title: "镇外原野",
+  subtitle: "橡树小镇外的第一段荒途",
+  desc: "古门外是一片被旧路切开的荒草原。白日里还能看见商队车辙，入夜后雾气会从低洼处漫上来，把野兽、盗匪和更深处的异响一并带到路边。",
+  entryText: "从橡树小镇出发，沿旧商路穿过荒草、石坡与废弃界碑，适合作为新手远征者的第一处副本。",
+  warning: "原野并不封闭，补给耗尽时最危险；抵达后半程前最好保留药剂与干粮。",
+  music: "assets/audio/ch01.mp3",
+  bossStep: 100,
+  routeNodes: [
+    { type: "shop", step: 60, label: "60", tip: "行脚铺：抵达 60 步时自动进入镇外行脚铺。" },
+    { type: "shop", step: 90, label: "90", tip: "界碑补给：抵达 90 步时自动进入 Boss 前补给摊。" },
+    { type: "boss", step: 100, label: "100", tip: "Boss 战：穿过废弃界碑后强制进入原野深处的首领战。" },
+  ],
+  regions: ["旧商路", "荒草坡", "废弃界碑"],
+  regionStages: [
+    { step: 0, name: "旧商路" },
+    { step: 33, name: "荒草坡" },
+    { step: 50, name: "废弃界碑" },
+  ],
+  timeLimit: 145,
+  enemyIds: ["fieldRaider", "leanWolf"],
+  enemySpawns: {
+    fieldRaider: {
+      minStep: 0,
+      maxStep: 100,
+      weights: { "0-33": 1, "33-50": 1, "50-75": 1, "75-100": 1 },
+    },
+    leanWolf: {
+      minStep: 15,
+      maxStep: 85,
+      weights: { "0-33": 0.5, "33-50": 1, "50-75": 1.2, "75-100": 0.6 },
+    },
+  },
+  enemyConfig: {
+    maxLevel: 50,
+    levelRule: {
+      levelCap: 10,
+      baseLevel: 1,
+      bossLevel: 10,
+      ranges: { "0-33": [1, 3], "33-50": [3, 5], "50-75": [5, 8], "75-100": [7, 10] },
+      balance: {
+        normal: { hp: 0.88, atk: 0.86 },
+        boss: { hp: 0.7, atk: 0.72 },
+      },
+    },
+    growth: {
+      normal: { hp: 80, atk: 1.5, damageReduction: 0.005, speed: 1.7 },
+      boss: { hp: 100, atk: 1.5, damageReduction: 0.01, speed: 2 },
+    },
+    rewards: {
+      normalGoldMultiplier: 0.55,
+      bossGoldMultiplier: 0.7,
+      normalItemDropChance: 0.18,
+      bossItemDropChance: 0.45,
+      normalDropPool: ["apprenticeHealthPotion", "apprenticeManaPotion", "apprenticePowerPotion", "wardIncense"],
+      bossDropPool: ["apprenticeHealthPotion", "apprenticeManaPotion", "apprenticePowerPotion", "wardIncense"],
+      normalEquipmentDropChance: 0.01,
+      normalEquipmentDropPool: ["travelerSword", "studdedJerkin"],
+    },
+  },
+  boss: "mistGuardian",
+  growth: { hp: 20, atk: 5, damageReduction: 0.02 },
+  shops: [
+    {
+      id: "oak01_mid",
+      name: "原野行脚铺",
+      desc: "旧棚支在荒草坡边，掌柜把短剑、皮甲和几瓶药摆在油灯下，像摆一排小小的退路。",
+      step: 60,
+      goods: [
+        { type: "equipment", id: "travelerSword", stock: 1 },
+        { type: "equipment", id: "studdedJerkin", stock: 1 },
+        { type: "item", id: "apprenticeHealthPotion", stock: 2 },
+        { type: "item", id: "apprenticeManaPotion", stock: 2 },
+        { type: "item", id: "apprenticePowerPotion", stock: 1 },
+      ],
+    },
+    {
+      id: "oak01_boss",
+      name: "废弃界碑补给摊",
+      desc: "摊主不问来处，只把符箓压在石上。越靠近界碑后的雾，越没人嫌价格难看。",
+      step: 90,
+      goods: [
+        { type: "equipment", id: "travelerSword", stock: 1 },
+        { type: "equipment", id: "studdedJerkin", stock: 1 },
+        { type: "item", id: "apprenticeHealthPotion", stock: 2 },
+        { type: "item", id: "apprenticeManaPotion", stock: 2 },
+        { type: "item", id: "apprenticePowerPotion", stock: 1 },
+        { type: "item", id: "wardIncense", stock: 1 },
+      ],
+    },
+  ],
+  eventTable: [
+    { eventId: "oak-road-cache", minStep: 0, maxStep: 45, weight: 4 },
+    { eventId: "oak-wolf-tracks", minStep: 15, maxStep: 70, weight: 4 },
+    { eventId: "oak-abandoned-cart", minStep: 30, maxStep: 90, weight: 3 },
+    { eventId: "oak-fog-marker", minStep: 55, maxStep: 100, weight: 3 },
+  ],
+  envLines: [
+    { minStep: 0, maxStep: 32, text: "旧商路在草间若隐若现，车辙里积着昨夜的冷露。" },
+    { minStep: 33, maxStep: 49, text: "荒草坡上的风压低草尖，远处偶尔传来铁器碰石的轻响。" },
+    { minStep: 50, maxStep: 100, text: "废弃界碑半埋在土里，碑后雾气像一扇没关严的门。" },
+  ],
+  tavernRumors: [
+    {
+      id: "oak01-supply-gap",
+      title: "耳语：原野后半程",
+      text: "你把杯子推近吧台暗处，隔壁桌的酒客正把声音压到灯芯一样细。",
+      result: "酒客压低声音说：镇外原野最危险的不是第一眼看见的怪物，而是荒草坡之后才出现的补给缺口。",
+    },
+    {
+      id: "oak01-late-merchant-prices",
+      title: "耳语：界碑摊位",
+      text: "跑商人把湿斗篷搭在椅背上，指节有一下没一下地点着酒杯。",
+      result: "跑商人说，镇外原野的 60 步与 90 步附近常有临时摊位，但越靠近废弃界碑，价格越不讲情面。",
+    },
+  ],
+  guildReports: [
+    {
+      id: "oak01-supply-gaps",
+      name: "行会密报：原野补给缺口",
+      text: "书记员取出一份镇外原野补给报告，提醒你注意荒草坡后的补给节点。",
+      result: "密报写着：镇外原野中段的补给摊位常在第 60 步附近出现，抵达前最好别把恢复品耗尽。越接近废弃界碑，商人越敢开高价。",
+    },
+    {
+      id: "oak01-boss-window",
+      name: "行会密报：界碑前夜",
+      text: "书记员展开一张粗糙路线图，最后十步被红蜡圈了起来，旁边写着几行急促批注。",
+      result: "密报写着：第 90 步后的补给选择最关键。若钱袋还够，Boss 前的药剂和卷轴通常比镇中便宜不了多少，却能救一次命。",
+    },
+  ],
+});
